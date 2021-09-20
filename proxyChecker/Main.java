@@ -16,12 +16,11 @@ public class Main {
             while ((i = fin.read()) != -1){
                 if(i==13) continue; // Возврат каретки, то пропускаем иттерацию
                 else if(i == 10){ // Перенос строки
-                    System.out.println("Пытаюсь подключиться: "+result);
                     String ip = result.split(":")[0];
                     int port = Integer.parseInt(result.split(":")[1]);
                     result = "";
-                    checkProxy(ip, port);
-                    System.out.println("*-----------*");
+                    Thread thread = new Thread(new CheckProxyClass(ip, port));
+                    thread.start();
                 }else if(i==9) { // Табуляция
                     result += ":";
                 }else{ // Остальные символы
@@ -33,12 +32,23 @@ public class Main {
         }
 
     }
+}
+
+class CheckProxyClass implements Runnable{
+    String ip;
+    int port;
+
+    // Конструктор
+    public CheckProxyClass(String ip, int port) {
+        this.ip = ip;
+        this.port = port;
+    }
 
     // Метод checkProxy принимает на вход ip и port которые мы читаем построчно из файла
     // Результат выводит на экран
     // Если ip рабочий, то сервер нам его возваращает
     // Если нет, то случается Exception и мы пишем на экран, что ip не работает!
-    static void checkProxy(String ip, int port){
+    private void checkProxy(String ip, int port){
         try {
             // Создаём объект прокси
             Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ip,port));
@@ -63,5 +73,9 @@ public class Main {
             // Если ip не доступен, то бужет Exception, но мы его обрабатываем и выводим инфо на экран
             System.out.println("IP: "+ip+" не работает!");
         }
+    }
+    @Override
+    public void run() {
+        this.checkProxy(this.ip, this.port);
     }
 }
