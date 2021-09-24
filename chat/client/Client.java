@@ -22,7 +22,7 @@ public class Client {
                     try {
                         while (true){
                             String response = in.readUTF();
-                            System.out.println("Ответ сервера - "+response);
+                            System.out.println(response);
                         }
                     }catch (IOException e){
                         System.out.println("Соединение разорвано");
@@ -32,7 +32,6 @@ public class Client {
             thread.start();
 
             while (true){
-                System.out.println("Введите сообщение: ");
                 String text = scanner.nextLine();
                 out.writeUTF(text);
             }
